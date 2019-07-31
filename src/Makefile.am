@@ -9,6 +9,7 @@ binexe_PROGRAMS = $(tool)
 mytool_SOURCES = pars2tab.cc
 mytool_CPPFLAGS = $(CIAO_CFLAGS)
 mytool_LDADD = $(CIAO_LIBS) 
+mytool_LINK = $(CXX) -o $@
 
 dist_param_DATA = $(tool).par
 dist_ahelp_DATA = $(tool).xml

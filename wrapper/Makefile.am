@@ -1,1 +1,1 @@
-dist_bin_SCRIPTS = pars2tab
+dist_bin_SCRIPTS = mytool

@@ -1,6 +1,8 @@
 AC_INIT([mytool], [1.0.0], [glotfeltyk@si.edu])
 AM_INIT_AUTOMAKE([foreign -Wall])
-AC_PROG_C
+AC_PROG_CC
+AC_PROG_CXX
+AM_PROG_CC_C_O
 
 
 # -- Hack to provide missing pkg-config files
