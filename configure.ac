@@ -54,6 +54,7 @@ AC_CONFIG_FILES([
   Makefile
   src/Makefile
   wrapper/Makefile
+  test/Makefile
 ])
 
 AC_CONFIG_FILES([wrapper/mytool:wrapper/wrapper.sh],[chmod +x wrapper/mytool])
