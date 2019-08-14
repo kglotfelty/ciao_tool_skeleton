@@ -256,7 +256,7 @@ The skeleton is setup so that you can `make check` before you
 libraries must be `install`ed already to build the tool.
 
 
-## `./autogen.sh`
+### 8. Run `./autogen.sh`
 
 At this point the tool has now been grafted onto the skeleton.
 We can then use the standard suite of `autoconf|aclocale|automake`
@@ -274,9 +274,10 @@ parallel-tests: installing './test-driver'
 ```
 
 
-## `./configure`, `make`, `make install`
+### 9. `./configure`, `make`, `make install`
 
-
+`autogen` creates a `configure` script with the usual 
+options, to ahead and configure pointing to your CIAO installation
 
 
 ```bash
@@ -285,6 +286,19 @@ $ ./configure --prefix=/soft/ciao
 checking for CIAO... yes
 ...
 ```
+
+and then you can `make` your tool
+
+```bash
+$ make
+$ make check     # aka make test
+$ make install
+$ make clean
+
+$ make dist      # creates tar file for distribution
+$ make distclean # cleans up generated files
+``` 
+
 
 
 
