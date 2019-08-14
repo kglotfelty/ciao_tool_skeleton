@@ -46,7 +46,7 @@ tool.
 ### 1. Download skeleton
 
 ```bash
-git clone file:///data/lenin2/Projects/kCIAO/_Skeleton skel
+git clone https://github.com/kglotfelty/ciao_tool_skeleton 
 ```
 
 ### 2. Copy skeleton files into tool directory
@@ -55,13 +55,12 @@ Here I assume that the source code for your tool is in a separate directory.
 
 
 ```bash
-cd skel
+cd ciao_tool_skeleton
 /bin/ls .autom4te.cfg Makefile.am autogen.sh configure.ac pkgconfig/* src/* test/* wrapper/* | \
   cpio -pdv /pool1/kjg/dither_region
 ```
 
 ### 3. Move source code to `src` directory
-
 
 ```bash
 cd /pool1/$USER/dither_region
@@ -198,6 +197,13 @@ dither_region_LDADD = $(CIAO_LIBS)
 dither_region_LINK = $(CXX) -o $@ -Wl,-rpath,$(prefix)/lib -Wl,-rpath,$(prefix)/ots/lib 
 ```
 
+Note: For arcane historical reasons, all CIAO tools must use the
+C++ linker.
+
+
+
+
+
 
 #### 5.2 Update `SOURCES`
 
@@ -286,11 +292,34 @@ $ ./configure --prefix=/soft/ciao
 checking for CIAO... yes
 ...
 ```
+The `checking for CIAO` line is where it use `pkg-config` to examine
+the CIAO pkgconfig files to determine the link line.
 
-and then you can `make` your tool
+
+You can then `make` your tool
 
 ```bash
 $ make
+...
+g++ -o dither_region -Wl,-rpath,/soft/ciao/lib -Wl,-rpath,/soft/ciao/ots/lib  
+  dither_region-ard_pix.o
+  dither_region-asp.o dither_region-convex_hull.o
+  dither_region-dither_region.o dither_region-dtf.o
+  dither_region-gti.o dither_region-imap.o dither_region-output.o 
+  dither_region-psf.o dither_region-region.o dither_region-t_dither_region.o 
+  -L/soft/ciao/lib -L/soft/ciao/ots/lib -lds -lerr -lNewHdr2 
+  -lcaldb4 -lstk -lardlib -lpix -lm -lascdm -lcxcparam -lcfitsio 
+  -lregion -lreadline -lhistory   -L/soft/ciao/ots/lib -lstdc++ 
+  -lreadline -lhistory -lncurses -ltinfo
+```
+
+While still a long link line, it's a lot easier then trying to figure out 
+the order yourself.
+
+And as per-usual you can then
+
+
+```bash
 $ make check     # aka make test
 $ make install
 $ make clean
