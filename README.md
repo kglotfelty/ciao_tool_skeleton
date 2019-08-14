@@ -159,7 +159,7 @@ For example, I have isolated the `dmimgio` _local_ _library_, created a
 stand alone github repro for it, and install it separately into the CIAO 
 distribution.  The skeleton `configure.ac` checks for it
 
-```m4
+```autoconf
 # -------- dmimgio.h ------------
 foo=$CPPFLAGS
 CPPFLAGS=$CIAO_CFLAGS
@@ -178,7 +178,7 @@ Since `dither_region` does not use `dmimgio`, we can comment out that part.
 The way `automake` works, the variable names need to match the executable
 so I need to change all instances of `mytool` to `dither_region`
 
-```m4
+```Makefile
 tool = dither_region
 ...
 
@@ -195,7 +195,7 @@ The `SOURCES` variable must include all the source code file
 names, including any header files.  (This is required so that `make dist`
 will include them when it builds the tar file.)
 
-```m4
+```Makefile
 dither_region_SOURCES = ard_pix.c asp.c convex_hull.c dither_region.c \
   dither_region.h dtf.c gti.c imap.c output.c psf.c region.c \
   t_dither_region.c
