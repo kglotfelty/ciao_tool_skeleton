@@ -32,15 +32,11 @@ You will need to have the following packages installed on your system
 2. Copy skeleton files into tool directory.
 3. Move tool source code into the `src` directory.
 4. Edit `./configure.ac`
-  4.1. replace `AC_INIT`:  toolname, version number, contact email
-  4.2. Update `PKG_CHECK_MODULES`, list CIAO libraries that are used
-  4.x. `dmimgio.h`
-5. Change `mytool` in `test/Makefile.am`
+5. Edit `src/Makefile.am`
 6. Change `mytool` in `wrapper/Makefile.am`
-7. Edit `src/Makefile.am`
-  7.1. Change `mytool`
-  7.2. List all source files, including header files, in `mytool_SOURCES`
-  7.x. comment out ahelp
+7. Change `mytool` in `test/Makefile.am`
+8. Run `./autogen.sh`
+9. `./configure`, `make`, `make check`, `make install` 
 
 ## Step by step
 
@@ -173,13 +169,57 @@ AC_CHECK_HEADER( dmimgio.h, [],
 CPPFLAGS=$foo
 ```
 
+Since `dither_region` does not use `dmimgio`, we can comment out that part.
+
+### 5. Edit `src/Makefile.am`
+
+#### 5.1 Change `mytool`
+
+The way `automake` works, the variable names need to match the executable
+so I need to change all instances of `mytool` to `dither_region`
+
+```m4
+tool = dither_region
+...
+
+dither_region_SOURCES = dither_region.c
+dither_region_CPPFLAGS = $(CIAO_CFLAGS)
+dither_region_LDADD = $(CIAO_LIBS) 
+dither_region_LINK = $(CXX) -o $@ -Wl,-rpath,$(prefix)/lib -Wl,-rpath,$(prefix)/ots/lib 
+```
 
 
+#### 5.2 Update `SOURCES`
 
+The `SOURCES` variable must include all the source code file
+names, including any header files.  (This is required so that `make dist`
+will include them when it builds the tar file.)
 
-### 5. Change `mytool` in `test/Makefile.am`
-### 6. Change `mytool` in `wrapper/Makefile.am`
-### 7. Edit `src/Makefile.am`
-####  7.1. Change `mytool`
+```m4
+dither_region_SOURCES = ard_pix.c asp.c convex_hull.c dither_region.c \
+  dither_region.h dtf.c gti.c imap.c output.c psf.c region.c \
+  t_dither_region.c
+```
+
+Note: if your tool is C++, then change `CPPFLAGS` with `CXXFLAGS`
+
+#### No ahelp?
+
+If the tool does not have a CIAO style, XML-format ahelp file
+then you should comment it out as shown here:
+
+```Makefile
+dist_param_DATA = $(tool).par
+#dist_ahelp_DATA = $(tool).xml
+
+install-data-hook:
+	chmod a-w $(paramdir)/$(dist_param_DATA)
+#	chmod a-w $(ahelpdir)/$(dist_ahelp_DATA)
+```
+
 ####  7.2. List all source files, including header files, in `mytool_SOURCES`
 ####  7.x. comment out ahelp
+### 6. Change `mytool` in `wrapper/Makefile.am`
+### 7. Change `mytool` in `test/Makefile.am`
+### 8. Run `./autogen.sh`
+### 9. `./configure`, `make`, `make check`, `make install` 
