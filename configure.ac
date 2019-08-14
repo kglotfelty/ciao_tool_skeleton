@@ -16,6 +16,7 @@ done
 
 ## caldb in ciao4.11 is bad; fixed in 4.12
 cat $prefix/lib/pkgconfig/caldb4.pc | \
+  sed 's,^prefix=.*,prefix='$prefix',' | \
   sed 's,^Libs:.*,Libs: -L${libdir} -lcaldb4,' | \
   sed 's,^Cflags:.*,Cflags: -I${includedir},' > pkgconfig/caldb4.pc 
 
