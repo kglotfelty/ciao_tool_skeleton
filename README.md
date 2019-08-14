@@ -136,7 +136,17 @@ PKG_CHECK_MODULES( [CIAO], [
 ])
 ```
 
-#### 4.3 Local extras
+
+#### 4.3 `AC_CONFIG_FILES` CIAO wrapper script
+
+I use `configure` to create the CIAO wrapper script.  We need
+to replace `mytool` with the correct tool name:
+
+```m4
+AC_CONFIG_FILES([wrapper/dither_region:wrapper/wrapper.sh],[chmod +x wrapper/dither_region])
+```
+
+#### 4.4 Local extras
 
 Some of the existing CIAO tools make use of _local_ _libraries_.
 These are small libraries that are only used by a few tools and are 
@@ -159,7 +169,7 @@ For example, I have isolated the `dmimgio` _local_ _library_, created a
 stand alone github repro for it, and install it separately into the CIAO 
 distribution.  The skeleton `configure.ac` checks for it
 
-```autoconf
+```m4
 # -------- dmimgio.h ------------
 foo=$CPPFLAGS
 CPPFLAGS=$CIAO_CFLAGS
@@ -201,7 +211,6 @@ dither_region_SOURCES = ard_pix.c asp.c convex_hull.c dither_region.c \
   t_dither_region.c
 ```
 
-Note: if your tool is C++, then change `CPPFLAGS` with `CXXFLAGS`
 
 #### No ahelp?
 
@@ -217,9 +226,66 @@ install-data-hook:
 #	chmod a-w $(ahelpdir)/$(dist_ahelp_DATA)
 ```
 
-####  7.2. List all source files, including header files, in `mytool_SOURCES`
-####  7.x. comment out ahelp
 ### 6. Change `mytool` in `wrapper/Makefile.am`
+
+The CIAO wrapper is created by the configure script; it is
+installed via  wrapper/Makefile. 
+
+```Makefile
+dist_bin_SCRIPTS = dither_region
+```
+
 ### 7. Change `mytool` in `test/Makefile.am`
-### 8. Run `./autogen.sh`
-### 9. `./configure`, `make`, `make check`, `make install` 
+
+Finally, replace the test script name in `test/Makefile.am`.
+
+```Makefile
+TESTS = dither_region.t
+```
+
+The way the skeleton is setup, it looks for the input 
+data in `test/indata/dither_region` and the baseline
+data for comparison in `test/save_data/dither_region`.
+
+If you don't have CIAO tool style test script then you 
+can omit the `test` directory from the top level `Makefile.am`
+and remove `test/Makefile` from `configure.ac`
+
+The skeleton is setup so that you can `make check` before you
+`make install`.  This is on a tool-by-tool basis. The CIAO 
+libraries must be `install`ed already to build the tool.
+
+
+## `./autogen.sh`
+
+At this point the tool has now been grafted onto the skeleton.
+We can then use the standard suite of `autoconf|aclocale|automake`
+tools to generate the configure script.  The `autogen.sh` script
+in the skeleton runs these commands.
+
+```bash
+$ ./autogen.sh 
+configure.ac:5: installing './ar-lib'
+configure.ac:4: installing './compile'
+configure.ac:2: installing './install-sh'
+configure.ac:2: installing './missing'
+src/Makefile.am: installing './depcomp'
+parallel-tests: installing './test-driver'
+```
+
+
+## `./configure`, `make`, `make install`
+
+
+
+
+```bash
+$ ./configure --prefix=/soft/ciao
+...
+checking for CIAO... yes
+...
+```
+
+
+
+
