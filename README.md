@@ -75,7 +75,10 @@ should copy it into the `test` directory.
 
 ```bash
 mv *.t test/
+chmod +x test/*t
 ```
+
+Make sure it has execute permissions set.
 
 
 ### 4. Edit `configure.ac`
@@ -118,6 +121,8 @@ the pkgconfig name
 | ardlib.h     | ardlib        | Aux. Ref. Data library (ARF,etc)   |
 | ascdm.h      | ascdm         | CXC Datamodel I/O library          |
 | cxcregion.h  | region        | Geometric shapes                   |
+| dmimgio.h    | dmimgio       | (LocalLib) I/O dm lib wrapper for imgs|
+| dmfilters.h  | dmfilters     | (LocalLib) calcs various stats     | 
 
 
 Checking our tool we come up with the following list
@@ -166,17 +171,9 @@ using this skeleton.
 
 For example, I have isolated the `dmimgio` _local_ _library_, created a 
 stand alone github repro for it, and install it separately into the CIAO 
-distribution.  The skeleton `configure.ac` checks for it
+distribution.  
 
-```m4
-# -------- dmimgio.h ------------
-foo=$CPPFLAGS
-CPPFLAGS=$CIAO_CFLAGS
-AC_CHECK_HEADER( dmimgio.h, [], 
-  AC_MSG_ERROR([Cannot locate dmimgio.h header file], [1])
-)
-CPPFLAGS=$foo
-```
+
 
 Since `dither_region` does not use `dmimgio`, we can comment out that part.
 
